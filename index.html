@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js refraction</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+		<style>
+			body {
+				color: #444;
+			}
+			a {
+				color: #08f;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="container"></div>
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener noreferrer">three.js</a> - refraction
+		</div>
+
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../build/three.module.js",
+					"three/addons/": "./jsm/"
+				}
+			}
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { Refractor } from 'three/addons/objects/Refractor.js';
+			import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
+			import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
+
+			let camera, scene, renderer, clock;
+
+			let refractor, smallSphere;
+
+			init();
+
+			async function init() {
+
+				const container = document.getElementById( 'container' );
+
+				clock = new THREE.Clock();
+
+				// scene
+				scene = new THREE.Scene();
+
+				// camera
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
+				camera.position.set( 0, 75, 160 );
+
+				// refractor
+
+				const refractorGeometry = new THREE.PlaneGeometry( 90, 90 );
+
+				function makeRefractorText(text='REFRACTION'){ const c=document.createElement('canvas'); c.width=512; c.height=512; const g=c.getContext('2d'); g.fillStyle='rgba(255,255,255,0.1)'; g.fillRect(0,0,c.width,c.height); g.fillStyle='rgba(255,255,255,0.3)'; g.font='bold 60px system-ui'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(text, c.width/2, c.height/2); const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t; }
+
+				const labelTex = makeRefractorText('2025/09/25');
+				labelTex.colorSpace = THREE.SRGBColorSpace;
+
+				const label = new THREE.Mesh(
+				refractorGeometry.clone(),
+				new THREE.MeshBasicMaterial({ map: labelTex, transparent: true })
+				);
+				label.position.z = 0.01;           // nudge to avoid z-fighting (local +Z)
+				
+
+				refractor = new Refractor( refractorGeometry, {
+					color: 0xcbcbcb,
+					textureWidth: 1024,
+					textureHeight: 1024,
+					shader: WaterRefractionShader
+				} );
+
+				// Apply text texture to refractor
+				// refractor.material.uniforms.tDiffuse.value = label;
+
+				refractor.position.set( 0, 50, 0 );
+
+				scene.add( refractor );
+				refractor.add(label);
+
+				// load dudv map for distortion effect
+				// Note: Added error handling for texture loading
+				try {
+					const loader = new THREE.TextureLoader();
+					const dudvMap = await loader.loadAsync( 'textures/waterdudv.jpg' );
+					dudvMap.wrapS = dudvMap.wrapT = THREE.RepeatWrapping;
+					refractor.material.uniforms.tDudv.value = dudvMap;
+				} catch (error) {
+					console.warn('Could not load texture: textures/waterdudv.jpg', error);
+					// The refractor will work without the texture, just without the distortion effect
+				}
+
+				//
+
+				// sphere (unchanged)
+				const geometry = new THREE.IcosahedronGeometry(5,0);
+				const material = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x333333, flatShading: true });
+				smallSphere = new THREE.Mesh(geometry, material);
+				scene.add(smallSphere);
+
+				// walls — distressed concrete
+				const planeGeo = new THREE.PlaneGeometry(100.1, 100.1);
+				// enable aoMap
+				planeGeo.setAttribute('uv2', new THREE.BufferAttribute(planeGeo.attributes.uv.array, 2));
+
+				const loader = new THREE.TextureLoader();
+				const rep = 4;
+				const wrap = t => (t.wrapS=t.wrapT=THREE.RepeatWrapping, t.repeat.set(rep,rep), t);
+
+				// PBR textures (put your files here)
+				const albedo    = wrap(loader.load('textures/concrete/colour.jpeg'));
+				const normalMap = wrap(loader.load('textures/concrete/normal.jpeg'));
+				const roughMap  = wrap(loader.load('textures/concrete/roughness.jpeg'));
+				const aoMap     = wrap(loader.load('textures/concrete/ao.jpg'));
+				albedo.colorSpace = THREE.SRGBColorSpace;
+
+				const concrete = new THREE.MeshStandardMaterial({
+				map: albedo, normalMap, roughnessMap: roughMap, aoMap,
+				roughness: 1, metalness: 0
+				});
+
+				// same material, same geometry, same placements
+				const planeTop = new THREE.Mesh(planeGeo, concrete);    planeTop.position.y=100; planeTop.rotateX(Math.PI/2);       scene.add(planeTop);
+				const planeBottom = new THREE.Mesh(planeGeo, concrete); planeBottom.rotateX(-Math.PI/2);                            scene.add(planeBottom);
+				const planeBack = new THREE.Mesh(planeGeo, concrete);   planeBack.position.set(0,50,-50);                            scene.add(planeBack);
+				const planeRight = new THREE.Mesh(planeGeo, concrete);  planeRight.position.set(50,50,0); planeRight.rotateY(-Math.PI/2); scene.add(planeRight);
+				const planeLeft = new THREE.Mesh(planeGeo, concrete);   planeLeft.position.set(-50,50,0); planeLeft.rotateY(Math.PI/2);   scene.add(planeLeft);
+
+
+
+				// lights
+				const mainLight = new THREE.PointLight( 0x7a7a6b, 2.5, 250, 0 );
+				mainLight.position.y = 60;
+				scene.add( mainLight );
+
+				// renderer
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.setAnimationLoop( animate );
+				container.appendChild( renderer.domElement );
+
+
+
+				// controls
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.target.set( 0, 40, 0 );
+				controls.maxDistance = 400;
+				controls.minDistance = 10;
+				controls.update();
+
+				window.addEventListener( 'resize', onWindowResize );
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				const time = clock.getElapsedTime();
+
+				refractor.material.uniforms.time.value = time;
+
+				smallSphere.position.set(
+					Math.cos( time ) * 30,
+					Math.abs( Math.cos( time * 2 ) ) * 20 + 5,
+					Math.sin( time ) * 30
+				);
+				smallSphere.rotation.y = ( Math.PI / 2 ) - time;
+				smallSphere.rotation.z = time * 8;
+
+				renderer.render( scene, camera );
+
+			}
+
+	</script>
+
+</body>
+</html>
