@@ -1,4 +1,4 @@
-# com.nikitakent.com
+# com.nikitakent.www
 
 Uses [Three.js](https://threejs.org/) refractor library and vite for building.
 
