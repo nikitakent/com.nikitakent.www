@@ -63,7 +63,14 @@
 				const refractorGeometry = new THREE.PlaneGeometry( 90, 90 );
 
 				function makeRefractorText(text='REFRACTION')
-				{ const c=document.createElement('canvas'); c.width=512; c.height=512; const g=c.getContext('2d'); g.fillStyle='rgba(255,255,255,0.1)'; g.fillRect(0,0,c.width,c.height); g.fillStyle='rgba(255,255,255,0.3)'; g.font='bold 60px system-ui'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(text, c.width/2, c.height/2); const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t; }
+				{ const c=document.createElement('canvas'); c.width=512; 
+				c.height=512; const g=c.getContext('2d'); 
+				g.fillStyle='rgba(255,255,255,0.1)'; 
+				g.fillRect(0,0,c.width,c.height); 
+				g.fillStyle='rgba(255,255,255,0.3)'; 
+				g.font='bold 60px "Courier New", "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace'; 
+				g.textAlign='center'; g.textBaseline='middle'; 
+				g.fillText(text, c.width/2, c.height/2); const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t; }
 
 				const labelTex = makeRefractorText('2025/09/25');
 				labelTex.colorSpace = THREE.SRGBColorSpace;
