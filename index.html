@@ -63,24 +63,25 @@
 				const refractorGeometry = new THREE.PlaneGeometry( 90, 90 );
 
 				function makeRefractorText(text='REFRACTION')
-				{ const c=document.createElement('canvas'); c.width=512; 
-				c.height=512; const g=c.getContext('2d'); 
+				{ const c=document.createElement('canvas'); c.width=256; 
+				c.height=100; const g=c.getContext('2d'); 
 				g.fillStyle='rgba(255,255,255,0.1)'; 
 				g.fillRect(0,0,c.width,c.height); 
 				g.fillStyle='rgba(255,255,255,0.3)'; 
-				g.font='bold 60px "Courier New", "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace'; 
+				g.font='bold 80px "Courier New", "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace'; 
 				g.textAlign='center'; g.textBaseline='middle'; 
 				g.fillText(text, c.width/2, c.height/2); const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t; }
 
-				const labelTex = makeRefractorText('2025/09/25');
+				const labelTex = makeRefractorText('abt');
 				labelTex.colorSpace = THREE.SRGBColorSpace;
 
+				// Create much smaller geometry just for the text area
+				const textGeometry = new THREE.PlaneGeometry(15, 6); // Small area for just the text
 				const label = new THREE.Mesh(
-				refractorGeometry.clone(),
+				textGeometry,
 				new THREE.MeshBasicMaterial({ map: labelTex, transparent: true })
 				);
-				label.position.z = 0.01;           // nudge to avoid z-fighting (local +Z)
-				
+				label.position.set(30, 30, 0.01); 
 
 				refractor = new Refractor( refractorGeometry, {
 					color: 0xcbcbcb,
@@ -167,6 +168,48 @@
 				controls.maxDistance = 400;
 				controls.minDistance = 10;
 				controls.update();
+
+				// Raycaster + mouse
+				const raycaster = new THREE.Raycaster();
+				const mouse = new THREE.Vector2(1, 1);
+				let isHovering = false;
+
+				function onMouseMove(event) {
+				const rect = renderer.domElement.getBoundingClientRect();
+				mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+				mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+				raycaster.setFromCamera(mouse, camera);
+
+				// IMPORTANT: use recursive = true if label is a group or has children
+				const intersects = raycaster.intersectObject(label, true);
+
+				if (intersects.length > 0) {
+					if (!isHovering) {
+					isHovering = true;
+					label.material.color.set(0xb02f72);
+					renderer.domElement.style.cursor = 'pointer';
+					}
+				} else {
+					if (isHovering) {
+					isHovering = false;
+					label.material.color.set(0xffffff);
+					renderer.domElement.style.cursor = 'default';
+					}
+				}
+				}
+
+				function onMouseClick() {
+				raycaster.setFromCamera(mouse, camera);
+				const intersects = raycaster.intersectObject(label, true);
+				if (intersects.length > 0) {
+					window.open('/abt', '_blank');
+				}
+				}
+
+				renderer.domElement.addEventListener('mousemove', onMouseMove);
+				renderer.domElement.addEventListener('click', onMouseClick);
+
 
 				window.addEventListener( 'resize', onWindowResize );
 			}
