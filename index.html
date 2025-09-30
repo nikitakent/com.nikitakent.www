@@ -196,14 +196,14 @@
 					label.material.color.set(0xffffff);
 					renderer.domElement.style.cursor = 'default';
 					}
-				}
+				}	
 				}
 
 				function onMouseClick() {
 				raycaster.setFromCamera(mouse, camera);
 				const intersects = raycaster.intersectObject(label, true);
 				if (intersects.length > 0) {
-					window.open('/abt', '_blank');
+					window.location.href = '/abt';
 				}
 				}
 
