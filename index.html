@@ -17,7 +17,7 @@
 	<body>
 		
 		<div id="container"></div>
-		<div id="perception-box"><div class="loading-text">PERCEPTION LOADING</div><div class="cyber-box"></div></div>
+		<div id="perception-box"><div class="loading-text">PERCEPTION LOADING...</div><div class="cyber-box"></div></div>
 		
 		<script>
 			const box = document.querySelector('.cyber-box');
@@ -88,7 +88,7 @@
 				const textGeometry = new THREE.PlaneGeometry(15, 6); // Small area for just the text
 				const label = new THREE.Mesh(
 				textGeometry,
-				new THREE.MeshBasicMaterial({ map: labelTex, transparent: true })
+				new THREE.MeshBasicMaterial({ map: labelTex, transparent: true})
 				);
 				label.position.set(30, 30, 0.01); 
 
@@ -119,9 +119,6 @@
 					// The refractor will work without the texture, just without the distortion effect
 				}
 
-				//
-
-				// sphere (unchanged)
 				const geometry = new THREE.IcosahedronGeometry(5,0);
 				const material = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x333333, flatShading: true });
 				smallSphere = new THREE.Mesh(geometry, material);
@@ -205,6 +202,7 @@
 					if (!isHovering) {
 					isHovering = true;
 					label.material.color.set(0xb02f72);
+					label.material.opacity = 1.0;
 					renderer.domElement.style.cursor = 'pointer';
 					}
 				} else {
