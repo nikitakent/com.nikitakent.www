@@ -99,16 +99,14 @@
 					shader: WaterRefractionShader
 				} );
 
-				// Apply text texture to refractor
+				// This line of code below changes the perception wall to black, stylistic choice for future.
 				// refractor.material.uniforms.tDiffuse.value = label;
 
-				refractor.position.set( 0, 50, 0 );
-
+				refractor.position.set( 0, 50, 0 ); 
 				scene.add(refractor);
 				refractor.add(label);
 
-				// load dudv map for distortion effect
-				// Note: Added error handling for texture loading
+				// load dudv map for distortion (animation) effect
 				try {
 					const loader = new THREE.TextureLoader();
 					const dudvMap = await loader.loadAsync( 'textures/waterdudv.jpg' );
@@ -133,7 +131,7 @@
 				const rep = 4;
 				const wrap = t => (t.wrapS=t.wrapT=THREE.RepeatWrapping, t.repeat.set(rep,rep), t);
 
-				// Wall textures
+				// wall textures
 				const concreteColour    = wrap(loader.load('textures/concrete/colour.jpeg'));
 				const normalMap = wrap(loader.load('textures/concrete/normal.jpeg'));
 				const roughMap  = wrap(loader.load('textures/concrete/roughness.jpeg'));
@@ -193,7 +191,6 @@
 
 				raycaster.setFromCamera(mouse, camera);
 
-				// IMPORTANT: use recursive = true if label is a group or has children
 				const intersects = raycaster.intersectObject(label, true);
 
 				if (intersects.length > 0) {
@@ -222,22 +219,16 @@
 
 				renderer.domElement.addEventListener('mousemove', onMouseMove);
 				renderer.domElement.addEventListener('click', onMouseClick);
-
-
 				window.addEventListener( 'resize', onWindowResize );
 			}
 
 			function onWindowResize() {
-
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 			}
 
 			function animate() {
-
 				const time = clock.getElapsedTime();
 
 				refractor.material.uniforms.time.value = time;
@@ -251,7 +242,6 @@
 				smallSphere.rotation.z = time * 8;
 
 				renderer.render( scene, camera );
-
 			}
 
 	</script>
