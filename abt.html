@@ -26,20 +26,52 @@
             transform: translate(-50%, -50%);
             text-align: center;
             color: white;
+            max-width: 90vw;
+            width: 100%;
+            padding: 0 20px;
         }
         
         h1 {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             font-weight: bold;
             margin-bottom: 1rem;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         
         p {
-            font-size: 1rem;
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
             opacity: 0.9;
             line-height: 1.4;
             margin-bottom: 1rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 0 15px;
+            }
+            
+            p {
+                margin-bottom: 0.8rem;
+                line-height: 1.3;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .content {
+                padding: 0 10px;
+            }
+            
+            h1 {
+                margin-bottom: 0.8rem;
+            }
+            
+            p {
+                margin-bottom: 0.6rem;
+                line-height: 1.25;
+            }
         }
     </style>
 </head>
@@ -53,6 +85,7 @@
         <p>I have spoken at several conferences and government initiatives, including the New Zealand parliament, Latin America CAPE, Otago Foreign Policy School, SusHi Tech and the APEC leaders forum. I have also led and executed media partnerships with Blockchain New Zealand, Lane Neave lawyers, Association for Women in Crypto, Easy Crypto, Trezor hard wallets, WebX Asia, among others.</p>
         
         <p>Currently I am focussed on product/strategy engineering with AltX Research where I spend my time happily doing a bunch of different things with blockchains, cryptography, stablecoins, and identity in Japan.</p>
+    <p>p.s. will change the font soon, still trying to find the perfect one</p>
     </div>
 </body>
 </html>
