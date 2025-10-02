@@ -74,9 +74,8 @@
 				function makeRefractorText(text='REFRACTION')
 				{ const c=document.createElement('canvas'); c.width=256; 
 				c.height=100; const g=c.getContext('2d'); 
-				g.fillStyle='rgba(255,255,255,0.1)'; 
+				g.fillStyle='rgba(255,255,255,0.5)'; 
 				g.fillRect(0,0,c.width,c.height); 
-				g.fillStyle='rgba(255,255,255,0.3)'; 
 				g.font='normal 80px "Gill Sans", "Gill Sans MT", sans-serif';
 				g.letterSpacing = '16px'; // 20% of 80px font size (aka "tracking")
 				g.textAlign='center'; g.textBaseline='middle'; 
@@ -222,7 +221,7 @@
 					const startTarget = controls.target.clone();
 					
 					// Target position (extremely close to create "zooming into pixel" effect)
-					const targetPosition = new THREE.Vector3(30, 30, 0.01); // Very close to label at (30, 30, 0.01)
+					const targetPosition = new THREE.Vector3(30, 80, 0.01); // Very close to label, moved up Y axis
 					const targetLookAt = new THREE.Vector3(30, 30, 0);
 					
 					// Animation variables
