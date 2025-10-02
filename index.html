@@ -221,8 +221,8 @@
 					const startTarget = controls.target.clone();
 					
 					// Target position (extremely close to create "zooming into pixel" effect)
-					const targetPosition = new THREE.Vector3(30, 80, 0.01); // Very close to label, moved up Y axis
-					const targetLookAt = new THREE.Vector3(30, 30, 0);
+					const targetPosition = new THREE.Vector3(30, 75, 0.01); // Very close to label, moved up Y axis
+					const targetLookAt = new THREE.Vector3(0, 30, 0);
 					
 					// Animation variables
 					let startTime = performance.now();
@@ -241,6 +241,9 @@
 						// Interpolate look-at target
 						const currentTarget = startTarget.clone().lerp(targetLookAt, eased);
 						camera.lookAt(currentTarget);
+
+						// wall shatters effect could go here
+						// free falling effects could go here
 						
 						if (progress < 1) {
 							requestAnimationFrame(animateCamera);
