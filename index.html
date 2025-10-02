@@ -258,6 +258,17 @@
 				renderer.domElement.addEventListener('mousemove', onMouseMove);
 				renderer.domElement.addEventListener('click', onMouseClick);
 				window.addEventListener( 'resize', onWindowResize );
+
+				// Reset camera when user returns to page (back button)
+				document.addEventListener('visibilitychange', function() {
+					if (!document.hidden) {
+						// Page is visible again, reset camera to initial position
+						camera.position.set(0, 75, 400);
+						controls.target.set(0, 40, 0);
+						controls.enabled = true;
+						controls.update();
+					}
+				});
 			}
 
 			function onWindowResize() {
