@@ -241,15 +241,14 @@
 						// Interpolate look-at target
 						const currentTarget = startTarget.clone().lerp(targetLookAt, eased);
 						camera.lookAt(currentTarget);
-
-						// wall shatters effect could go here
-						// free falling effects could go here
 						
 						if (progress < 1) {
 							requestAnimationFrame(animateCamera);
 						} else {
-							// Animation complete, navigate to page
-							window.location.href = '/abt';
+							// Animation complete, pause for 1 second before navigating
+							setTimeout(() => {
+								window.location.href = '/abt';
+							}, 1000);
 						}
 					}
 					
