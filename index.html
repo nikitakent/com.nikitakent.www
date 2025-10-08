@@ -224,13 +224,13 @@
 					const firstTargetPosition = new THREE.Vector3(30, 75, 0.01); // Very close to label, moved up Y axis
 					const secondTargetPosition = new THREE.Vector3(30, -60, 0.01); // Second target position
 					const targetLookAt = new THREE.Vector3(0, 30, 0);
-					const targetLookAt2 = new THREE.Vector3(0, 0, 0);
+					const targetLookAt2 = new THREE.Vector3(0, -30, 0);
 					
 					// Animation variables
 					let startTime = performance.now();
 					let phase = 1; // Phase 1: initial zoom, Phase 2: second movement
 					const firstDuration = 2000; 
-					const secondDuration = 4000; 
+					const secondDuration = 3000; 
 					
 					function animateCamera() {
 						const elapsed = performance.now() - startTime;
