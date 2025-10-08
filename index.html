@@ -220,35 +220,54 @@
 					const startPosition = camera.position.clone();
 					const startTarget = controls.target.clone();
 					
-					// Target position (extremely close to create "zooming into pixel" effect)
-					const targetPosition = new THREE.Vector3(30, 75, 0.01); // Very close to label, moved up Y axis
+					// First target position (extremely close to create "zooming into pixel" effect)
+					const firstTargetPosition = new THREE.Vector3(30, 75, 0.01); // Very close to label, moved up Y axis
+					const secondTargetPosition = new THREE.Vector3(30, -60, 0.01); // Second target position
 					const targetLookAt = new THREE.Vector3(0, 30, 0);
+					const targetLookAt2 = new THREE.Vector3(0, 0, 0);
 					
 					// Animation variables
 					let startTime = performance.now();
-					const duration = 2000; // 2 seconds
+					let phase = 1; // Phase 1: initial zoom, Phase 2: second movement
+					const firstDuration = 2000; 
+					const secondDuration = 4000; 
 					
 					function animateCamera() {
 						const elapsed = performance.now() - startTime;
-						const progress = Math.min(elapsed / duration, 1);
 						
-						// Easing function (ease-out)
-						const eased = 1 - Math.pow(1 - progress, 3);
-						
-						// Interpolate camera position
-						camera.position.lerpVectors(startPosition, targetPosition, eased);
-						
-						// Interpolate look-at target
-						const currentTarget = startTarget.clone().lerp(targetLookAt, eased);
-						camera.lookAt(currentTarget);
-						
-						if (progress < 1) {
-							requestAnimationFrame(animateCamera);
-						} else {
-							// Animation complete, pause for 1 second before navigating
-							setTimeout(() => {
+						if (phase === 1) {
+							// First animation phase
+							const progress = Math.min(elapsed / firstDuration, 1);
+							const eased = 1 - Math.pow(1 - progress, 3);
+							
+							camera.position.lerpVectors(startPosition, firstTargetPosition, eased);
+							const currentTarget = startTarget.clone().lerp(targetLookAt, eased);
+							camera.lookAt(currentTarget);
+							
+							if (progress < 1) {
+								requestAnimationFrame(animateCamera);
+							} else {
+								// First animation complete, pause for 0.5 seconds
+								setTimeout(() => {
+									phase = 2;
+									startTime = performance.now(); // Reset timer for second phase
+									animateCamera();
+								}, 500);
+							}
+						} else if (phase === 2) {
+							// Second animation phase
+							const progress = Math.min(elapsed / secondDuration, 1);
+							const eased = 1 - Math.pow(1 - progress, 3);
+							
+							camera.position.lerpVectors(firstTargetPosition, secondTargetPosition, eased);
+							camera.lookAt(targetLookAt2);
+							
+							if (progress < 1) {
+								requestAnimationFrame(animateCamera);
+							} else {
+								// Second animation complete, navigate to page
 								window.location.href = '/abt';
-							}, 1000);
+							}
 						}
 					}
 					
