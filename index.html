@@ -4,7 +4,7 @@
 		<title>nikitakent</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="main.css">
+		<link type="text/css" rel="stylesheet" href="styles.css">
 		<style>
 			body { color: #444; background: #000; }
 			a { color: #b02F72; }
@@ -18,7 +18,7 @@
 		
 		<div id="container"></div>
 		<div id="perception-box"><div class="loading-text">perception loading</div><div class="cyber-box"></div></div>
-		
+
 		<script>
 			const box = document.querySelector('.cyber-box');
 			let rotation = 0;
@@ -42,15 +42,12 @@
 		<script type="module">
 
 			import * as THREE from 'three';
-
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-			import { Refractor } from 'three/addons/objects/Refractor.js';
-			import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
-			import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
+			import { RefractorText } from './js/RefractorText.js';
+			import { SceneUtils } from './js/SceneUtils.js';
 
 			let camera, scene, renderer, clock;
-
-			let refractor, smallSphere;
+			let refractorText, bouncingSphere;
 
 			init();
 
@@ -67,93 +64,29 @@
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
 				camera.position.set( 0, 75, 400 );
 
-				// refractor
-
-				const refractorGeometry = new THREE.PlaneGeometry( 90, 90 );
-
-				function makeRefractorText(text='REFRACTION')
-				{ const c=document.createElement('canvas'); c.width=256; 
-				c.height=100; const g=c.getContext('2d'); 
-				g.fillStyle='rgba(255,255,255,0.5)'; 
-				g.fillRect(0,0,c.width,c.height); 
-				g.font='normal 80px "Gill Sans", "Gill Sans MT", sans-serif';
-				g.letterSpacing = '16px'; // 20% of 80px font size (aka "tracking")
-				g.textAlign='center'; g.textBaseline='middle'; 
-				g.fillText(text, c.width/2, c.height/2); const t=new THREE.CanvasTexture(c); t.anisotropy=8; return t; }
-
-				const labelTex = makeRefractorText('abt');
-				labelTex.colorSpace = THREE.SRGBColorSpace;
-
-				// Create much smaller geometry just for the text area
-				const textGeometry = new THREE.PlaneGeometry(15, 6); 
-				const label = new THREE.Mesh(
-				textGeometry,
-				new THREE.MeshBasicMaterial({ map: labelTex, transparent: true})
-				);
-				label.position.set(30, 30, 0.01); 
-
-				refractor = new Refractor( refractorGeometry, {
+				// Create refractor text using the module
+				refractorText = new RefractorText(scene, {
+					text: 'abt',
+					position: { x: 0, y: 50, z: 0 },
+					textPosition: { x: 30, y: 30, z: 0.01 },
 					color: 0xcbcbcb,
 					textureWidth: 1024,
-					textureHeight: 1024,
-					shader: WaterRefractionShader
-				} );
-
-				// This line of code below changes the perception wall to black, stylistic choice for future.
-				// refractor.material.uniforms.tDiffuse.value = label;
-
-				refractor.position.set( 0, 50, 0 ); 
-				scene.add(refractor);
-				refractor.add(label);
-
-				// load dudv map for distortion (animation) effect
-				try {
-					const loader = new THREE.TextureLoader();
-					const dudvMap = await loader.loadAsync( 'textures/waterdudv.jpg' );
-					dudvMap.wrapS = dudvMap.wrapT = THREE.RepeatWrapping;
-					refractor.material.uniforms.tDudv.value = dudvMap;
-				} catch (error) {
-					console.warn('Could not load texture: textures/waterdudv.jpg', error);
-					// The refractor will work without the texture, just without the distortion effect
-				}
-
-				const geometry = new THREE.IcosahedronGeometry(5,0);
-				const material = new THREE.MeshPhongMaterial({ color: 0xffffff, emissive: 0x333333, flatShading: true });
-				smallSphere = new THREE.Mesh(geometry, material);
-				scene.add(smallSphere);
-
-				// walls — distressed concrete
-				const planeGeo = new THREE.PlaneGeometry(100.1, 100.1);
-				// enable aoMap
-				planeGeo.setAttribute('uv2', new THREE.BufferAttribute(planeGeo.attributes.uv.array, 2));
-
-				const loader = new THREE.TextureLoader();
-				const rep = 4;
-				const wrap = t => (t.wrapS=t.wrapT=THREE.RepeatWrapping, t.repeat.set(rep,rep), t);
-
-				// wall textures
-				const concreteColour    = wrap(loader.load('textures/concrete/colour.jpeg'));
-				const normalMap = wrap(loader.load('textures/concrete/normal.jpeg'));
-				const roughMap  = wrap(loader.load('textures/concrete/roughness.jpeg'));
-				const aoMap     = wrap(loader.load('textures/concrete/ao.jpg'));
-				concreteColour.colorSpace = THREE.SRGBColorSpace;
-
-				const concrete = new THREE.MeshStandardMaterial({
-				map: concreteColour, normalMap, roughnessMap: roughMap, aoMap,
-				roughness: 1, metalness: 0
+					textureHeight: 1024
 				});
 
-				// same material, same geometry, same placements
-				const planeTop = new THREE.Mesh(planeGeo, concrete);    planeTop.position.y=100; planeTop.rotateX(Math.PI/2);       scene.add(planeTop);
-				const planeBottom = new THREE.Mesh(planeGeo, concrete); planeBottom.rotateX(-Math.PI/2);                            scene.add(planeBottom);
-				const planeBack = new THREE.Mesh(planeGeo, concrete);   planeBack.position.set(0,50,-50);                            scene.add(planeBack);
-				const planeRight = new THREE.Mesh(planeGeo, concrete);  planeRight.position.set(50,50,0); planeRight.rotateY(-Math.PI/2); scene.add(planeRight);
-				const planeLeft = new THREE.Mesh(planeGeo, concrete);   planeLeft.position.set(-50,50,0); planeLeft.rotateY(Math.PI/2);   scene.add(planeLeft);
+				// Create bouncing sphere using scene utils
+				bouncingSphere = SceneUtils.createBouncingSphere(scene);
 
-				// lights
-				const mainLight = new THREE.PointLight( 0x7a7a6b, 2.5, 250, 0 );
-				mainLight.position.y = 60;
-				scene.add( mainLight );
+				// Create concrete walls using scene utils
+				SceneUtils.createConcreteWalls(scene);
+
+				// Create lighting using scene utils
+				SceneUtils.createLighting(scene, {
+					color: 0x7a7a6b,
+					intensity: 2.5,
+					distance: 250,
+					y: 60
+				});
 
 				// renderer
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -179,40 +112,8 @@
 				controls.minDistance = 10;
 				controls.update();
 
-				// Raycaster + mouse
-				const raycaster = new THREE.Raycaster();
-				const mouse = new THREE.Vector2(1, 1);
-				let isHovering = false;
-
-				function onMouseMove(event) {
-				const rect = renderer.domElement.getBoundingClientRect();
-				mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-				mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-				raycaster.setFromCamera(mouse, camera);
-
-				const intersects = raycaster.intersectObject(label, true);
-
-				if (intersects.length > 0) {
-					if (!isHovering) {
-					isHovering = true;
-					label.material.color.set(0xb02f72);
-					label.material.opacity = 1.0;
-					renderer.domElement.style.cursor = 'pointer';
-					}
-				} else {
-					if (isHovering) {
-					isHovering = false;
-					label.material.color.set(0xffffff);
-					renderer.domElement.style.cursor = 'default';
-					}
-				}	
-				}
-
-				function onMouseClick() {
-				raycaster.setFromCamera(mouse, camera);
-				const intersects = raycaster.intersectObject(label, true);
-				if (intersects.length > 0) {
+				// Setup refractor text interaction with camera animation
+				refractorText.setupInteraction(camera, renderer, () => {
 					// Disable controls during animation
 					controls.enabled = false;
 					
@@ -230,13 +131,12 @@
 					let startTime = performance.now();
 					let phase = 1; // Phase 1: initial zoom, Phase 2: second movement
 					const firstDuration = 2000; 
-					const secondDuration = 4000; 
+					const secondDuration = 2000; 
 					
 					function animateCamera() {
 						const elapsed = performance.now() - startTime;
 						
 						if (phase === 1) {
-							// First animation phase
 							const progress = Math.min(elapsed / firstDuration, 1);
 							const eased = 1 - Math.pow(1 - progress, 3);
 							
@@ -265,18 +165,36 @@
 							if (progress < 1) {
 								requestAnimationFrame(animateCamera);
 							} else {
-								// Second animation complete, navigate to page
-								window.location.href = '/abt';
+								// Second animation complete, fade background to pink
+								const fadeOverlay = document.createElement('div');
+								fadeOverlay.style.cssText = `
+									position: fixed;
+									top: 0;
+									left: 0;
+									width: 100%;
+									height: 100%;
+									background: #b02F72;
+									opacity: 0;
+									transition: opacity 3s ease;
+									z-index: 9999;
+									pointer-events: none;
+								`;
+								document.body.appendChild(fadeOverlay);
+								
+								// Trigger fade
+								setTimeout(() => {
+									fadeOverlay.style.opacity = '1';
+									setTimeout(() => {
+										window.location.href = '/abt';
+									}, 1000);
+								}, 50);
 							}
 						}
 					}
 					
 					animateCamera();
-				}
-				}
+				});
 
-				renderer.domElement.addEventListener('mousemove', onMouseMove);
-				renderer.domElement.addEventListener('click', onMouseClick);
 				window.addEventListener( 'resize', onWindowResize );
 
 				// Reset camera when user returns to page (back button)
@@ -300,15 +218,11 @@
 			function animate() {
 				const time = clock.getElapsedTime();
 
-				refractor.material.uniforms.time.value = time;
+				// Update refractor animation
+				refractorText.animate(time);
 
-				smallSphere.position.set(
-					Math.cos( time ) * 30,
-					Math.abs( Math.cos( time * 2 ) ) * 20 + 5,
-					Math.sin( time ) * 30
-				);
-				smallSphere.rotation.y = ( Math.PI / 2 ) - time;
-				smallSphere.rotation.z = time * 8;
+				// Update animated sphere
+				bouncingSphere.animate(time);
 
 				renderer.render( scene, camera );
 			}

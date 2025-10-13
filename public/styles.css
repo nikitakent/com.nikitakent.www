@@ -1,0 +1,6 @@
+/* simple blur */
+.blur-text{
+  filter: blur(1.5px);
+  -webkit-filter: blur(1.5px); /* safari */
+}
+
