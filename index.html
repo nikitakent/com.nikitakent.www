@@ -8,27 +8,10 @@
 		<style>
 			body { color: #444; background: #000; }
 			a { color: #b02F72; }
-			#perception-box { position: fixed; top: 20px; left: 20px; font-family: "Gill Sans", "Gill Sans MT", sans-serif; color: white; }
-			.loading-text { font-size: 16px; font-weight: lighter; letter-spacing: 2px; animation: 2s ease-in-out infinite alternate; margin-bottom: 10px; }
-			.cyber-box { width: 10px; height: 10px; border: 2px solid white; background: #b02F72; box-shadow: 0 0 15px rgba(176,47,114,0.5), inset 0 0 5px rgba(176,47,114,0.3); transition: transform 0.3s ease; }
-			@keyframes glow { to { text-shadow: 0 0 20px #b02F72; } }
 		</style>
 	</head>
 	<body>
-		
 		<div id="container"></div>
-		<div id="perception-box"><div class="loading-text">perception loading</div><div class="cyber-box"></div></div>
-
-		<script>
-			const box = document.querySelector('.cyber-box');
-			let rotation = 0;
-			function rotateBox() {
-				rotation += 90;
-				box.style.transform = `rotate(${rotation}deg)`;
-				setTimeout(rotateBox, 400 + Math.random() * 200);
-			}
-			rotateBox();
-		</script>
 
 		<script type="importmap">
 			{
@@ -94,16 +77,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
 				container.appendChild( renderer.domElement );
-
-				// Hide perception box
-				const box = document.getElementById('perception-box');
-				if (box) {
-					setTimeout(() => {
-						box.style.transition = 'opacity 0.5s ease';
-						box.style.opacity = '0';
-						setTimeout(() => box.style.display = 'none', 200);
-					}, 800);
-				}
 
 				// controls
 				const controls = new OrbitControls( camera, renderer.domElement );
