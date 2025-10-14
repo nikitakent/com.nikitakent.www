@@ -104,6 +104,7 @@
         import * as THREE from 'three';
         import { Refractor } from 'three/addons/objects/Refractor.js';
         import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
+
         import { SceneUtils } from './js/SceneUtils.js';
         let scene, camera, renderer, clock, refractor, spinningSphere;
 
@@ -135,7 +136,6 @@
             scene.add(refractor);
             
             spinningSphere = SceneUtils.createSpinningSphere(scene)
-            // Load distortion texture
             try {
                 const loader = new THREE.TextureLoader();
                 const dudvMap = await loader.loadAsync('textures/waterdudv.jpg');
@@ -161,14 +161,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setAnimationLoop(animate);
-            renderer.setClearColor(0xb02F72, 1); // Pink background
+            renderer.setClearColor(0xb02F72, 1);
             
             container.appendChild(renderer.domElement);
-            
-            // Initial size adjustment
+
             onWindowResize();
-            
-            // Handle window resize
             window.addEventListener('resize', onWindowResize);
         }
 
