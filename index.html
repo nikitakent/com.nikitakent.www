@@ -26,11 +26,11 @@
 
 			import * as THREE from 'three';
 			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-			import { RefractorText } from './js/RefractorText.js';
+			import { ConcreteRefractor } from './js/ConcreteRefractor.js';
 			import { SceneUtils } from './js/SceneUtils.js';
 
 			let camera, scene, renderer, clock;
-			let refractorText, bouncingSphere;
+			let concreteRefractor, bouncingSphere;
 
 			init();
 
@@ -52,7 +52,7 @@
 				camera.position.set( 0, 75, 400 );
 
 				// Create refractor text using the module
-				refractorText = new RefractorText(scene, {
+				concreteRefractor = new ConcreteRefractor(scene, {
 					text: 'abt',
 					position: { x: 0, y: 50, z: 0 },
 					textPosition: { x: 30, y: 30, z: 0.01 },
@@ -90,7 +90,7 @@
 				controls.update();
 
 				// Setup refractor text interaction with camera animation
-				refractorText.setupInteraction(camera, renderer, () => {
+				concreteRefractor.setupInteraction(camera, renderer, () => {
 					// Disable controls during animation
 					controls.enabled = false;
 					
@@ -194,13 +194,8 @@
 
 			function animate() {
 				const time = clock.getElapsedTime();
-
-				// Update refractor animation
-				refractorText.animate(time);
-
-				// Update animated sphere
+				concreteRefractor.animate(time);
 				bouncingSphere.animate(time);
-
 				renderer.render( scene, camera );
 			}
 

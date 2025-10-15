@@ -91,7 +91,7 @@ export class SceneUtils {
         sphere.position.set(
             options.x || 0.5,
             options.y || -0.3,
-            options.z || 0
+            options.z || 0.0
         );
         scene.add(sphere);
         

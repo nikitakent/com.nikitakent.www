@@ -28,7 +28,7 @@
             width: 100%;
             height: 100%;
             z-index: 0;
-            pointer-events: none;
+            pointer-events: auto;
             animation: distortIn 4s;
         }
         
@@ -104,26 +104,27 @@
         import * as THREE from 'three';
         import { Refractor } from 'three/addons/objects/Refractor.js';
         import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
         import { SceneUtils } from './js/SceneUtils.js';
-        let scene, camera, renderer, clock, refractor, spinningSphere;
+        let scene, camera, renderer, clock, refractor, spinningSphere, controls;
 
         init();
 
         async function init() {
             const container = document.getElementById('refractor-canvas');
             
-            // Scene
+            // scene
             scene = new THREE.Scene();
             
-            // Camera
+            // camera
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 500);
             camera.position.z = 2;
             
-            // Clock
+            // clock for animation
             clock = new THREE.Clock();
             
-            // Create smaller refractor
+            // create /abt refractor
             const refractorGeometry = new THREE.PlaneGeometry(6, 4);
             
             refractor = new Refractor(refractorGeometry, {
@@ -153,7 +154,7 @@
 				});
 
             
-            // Renderer
+            // renderer
             renderer = new THREE.WebGLRenderer({ 
                 alpha: true,
                 antialias: true 
@@ -164,6 +165,25 @@
             renderer.setClearColor(0xb02F72, 1);
             
             container.appendChild(renderer.domElement);
+            
+            // Add OrbitControls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // Add sphere click detection
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            renderer.domElement.addEventListener('click', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                
+                if (spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0) {
+                    alert('More coming soon on 18 October 2025');
+                }
+            });
 
             onWindowResize();
             window.addEventListener('resize', onWindowResize);
@@ -179,7 +199,8 @@
         function animate() {
             const time = clock.getElapsedTime();
             
-            // Animate the refractor
+            if (controls) controls.update();
+            
             if (refractor) {
                 refractor.material.uniforms.time.value = time;
             }

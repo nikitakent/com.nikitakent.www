@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Refractor } from 'three/addons/objects/Refractor.js';
 import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
 
-export class RefractorText {
+export class ConcreteRefractor {
     constructor(scene, options = {}) {
         this.scene = scene;
         this.options = {
