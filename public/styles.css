@@ -4,3 +4,51 @@
   -webkit-filter: blur(1.5px); /* safari */
 }
 
+/* Menu Navigation Overlay (/abt and /blog) */
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-overlay.show {
+    display: flex;
+}
+
+.nav-menu {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.nav-menu button {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.nav-menu a {
+    display: block;
+    color: #b02F72;
+    text-decoration: none;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 1px solid #b02F72;
+    border-radius: 5px;
+}
+
+.nav-menu a:hover {
+    background: #b02F72;
+    color: white;
+}

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>abt - nikitakent</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #b02F72;
+            font-family: "Gill Sans", "Gill Sans MT", sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #refractor-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: auto;
+            animation: distortIn 4s;
+        }
+        
+        .content {
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            max-width: min(90vw, 800px);
+            padding: 0 5vw;
+            opacity: 0;
+            animation: fadeIn 4s ease-out forwards;
+            z-index: 1;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity:0;transform:translate(-50%,-50%) scale(1.1);filter:blur(3px);}
+            to {opacity:1;transform:translate(-50%,-50%);filter:none;}
+        }
+
+        @keyframes distortIn {
+            from {opacity:0;transform:scale(1.2)skew(10deg,5deg)rotate(-6deg);filter:blur(10px);}
+            to {opacity:1;transform:none;filter:none;}
+        }
+        
+        h1 {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        p {
+            font-size: clamp(0.7rem, 2.5vw, 1rem);
+            font-weight: 300;
+            opacity: 0.9;
+            line-height: 1.4;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .content { padding: 0 5vw; }
+            p { margin-bottom: 0.8rem; line-height: 1.3; }
+        }
+    </style>
+</head>
+<body>
+    <div id="refractor-canvas"></div>
+    <div class="content">
+        <h1 class="blur-text">/abt</h1>
+        <p>I use algorithms and game theory to improve markets of any kind. I am particularly interested in internet-based market applications, including high frequency trading, blockchain tokenomics, and improving liquidity in general (sorry, not sorry!!)</p>
+
+        <p>Previously, I was an analyst at Elevation Capital Management and interned at the United Nations secretariat. In 2022, I left New Zealand to pursue a Master's degree in Market Design at the University of Tokyo. In 2024, I wrote my thesis titled "Patent platform shows improvements in social welfare and profits" under the supervision of Prof. Shunya Noda.</p>
+
+        <p>Conferences and government initiatives I have spoken at include the New Zealand parliament, Latin America CAPE, Otago Foreign Policy School, SusHi Tech and the APEC leaders forum.</p>
+        
+        <p>Currently I am focussed on product/strategy engineering with AltX Research where I spend my time happily doing a bunch of different things with blockchains, cryptography, stablecoins, and identity in Japan.</p>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "../build/three.module.js",
+                "three/addons/": "./jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { Refractor } from 'three/addons/objects/Refractor.js';
+        import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        import { SceneUtils } from './js/SceneUtils.js';
+        import { ConcreteRefractor } from './js/ConcreteRefractor.js';
+        let scene, camera, renderer, clock, refractor, spinningSphere, controls;
+        let navMenuGroup, abtLabel, blogLabel, menuVisible = false;
+
+        init();
+
+        async function init() {
+            const container = document.getElementById('refractor-canvas');
+            
+            // scene
+            scene = new THREE.Scene();
+            
+            // camera
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 500);
+            camera.position.z = 2;
+            
+            // clock for animation
+            clock = new THREE.Clock();
+            
+            // create /abt refractor
+            const refractorGeometry = new THREE.PlaneGeometry(6, 4);
+            
+            refractor = new Refractor(refractorGeometry, {
+                textureWidth: 512,
+                textureHeight: 512,
+                shader: WaterRefractionShader
+            });
+            
+            refractor.position.set(0, 0, 0);
+            scene.add(refractor);
+            
+            // responsive sphere position below div.content
+            const calculateSpherePosition = () => {
+                const contentDiv = document.querySelector('.content');
+                const rect = contentDiv.getBoundingClientRect();
+                
+                // convert screen coordinates to Three.js world coordinates
+                const x = 0; // center sphere horizontally
+                const y = ((rect.bottom + 50) / window.innerHeight) * 2 - 1; // 50px below content
+                const worldY = -y; // flip Y coordinate for Three.js
+                
+                return { x: x, y: worldY, z: 0.2 };
+            };
+            
+            const spherePos = calculateSpherePosition();
+            spinningSphere = SceneUtils.createSpinningSphere(scene, {
+                x: spherePos.x,
+                y: spherePos.y,
+                z: spherePos.z
+            });
+            
+            try {
+                const loader = new THREE.TextureLoader();
+                const dudvMap = await loader.loadAsync('textures/waterdudv.jpg');
+                dudvMap.wrapS = dudvMap.wrapT = THREE.RepeatWrapping;
+                refractor.material.uniforms.tDudv.value = dudvMap;
+            } catch (error) {
+                console.warn('Could not load texture: textures/waterdudv.jpg', error);
+            }
+            		SceneUtils.createLighting(scene, {
+					color: 0xffffff,
+					intensity: 2.5,
+					distance: 250,
+					y: 60
+				});
+
+            
+            // renderer
+            renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setAnimationLoop(animate);
+            renderer.setClearColor(0xb02F72, 1);
+            
+            container.appendChild(renderer.domElement);
+            
+            // Create refractor-based navigation menu
+            createNavMenu();
+            
+            // Add OrbitControls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            
+            // Add close button event listener
+            document.getElementById('close-btn').addEventListener('click', closeNavMenu);
+            
+            // Add sphere click detection
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            renderer.domElement.addEventListener('click', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                
+                // Check sphere click
+                if (spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0) {
+                    toggleNavMenu();
+                    return;
+                }
+                
+                // Check menu item clicks when menu is visible
+                if (menuVisible) {
+                    const menuItems = [abtLabel, blogLabel];
+                    const intersects = raycaster.intersectObjects(menuItems);
+                    if (intersects.length > 0) {
+                        const clickedItem = intersects[0].object;
+                        if (clickedItem === abtLabel) {
+                            window.location.href = 'abt.html';
+                        } else if (clickedItem === blogLabel) {
+                            window.location.href = 'blog.html';
+                        }
+                    }
+                }
+            });
+
+            onWindowResize();
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function createNavMenu() {
+            navMenuGroup = new THREE.Group();
+            navMenuGroup.visible = false;
+            scene.add(navMenuGroup);
+            
+            // Create /abt label
+            const abtTexture = ConcreteRefractor.makeRefractorText('/abt');
+            const abtGeometry = new THREE.PlaneGeometry(1.5, 0.6);
+            abtLabel = new THREE.Mesh(
+                abtGeometry,
+                new THREE.MeshBasicMaterial({ map: abtTexture, transparent: true })
+            );
+            abtLabel.position.set(0, 0.5, 1);
+            navMenuGroup.add(abtLabel);
+            
+            // Create /blog label
+            const blogTexture = ConcreteRefractor.makeRefractorText('/blog');
+            const blogGeometry = new THREE.PlaneGeometry(1.5, 0.6);
+            blogLabel = new THREE.Mesh(
+                blogGeometry,
+                new THREE.MeshBasicMaterial({ map: blogTexture, transparent: true })
+            );
+            blogLabel.position.set(0, -0.5, 1);
+            navMenuGroup.add(blogLabel);
+        }
+
+        function toggleNavMenu() {
+            menuVisible = !menuVisible;
+            navMenuGroup.visible = menuVisible;
+        }
+
+        function closeNavMenu() {
+            menuVisible = false;
+            navMenuGroup.visible = false;
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            if (refractor) refractor.scale.setScalar(0.8 * Math.max(camera.aspect, 1));
+            
+            // Update sphere position on resize
+            if (spinningSphere) {
+                const contentDiv = document.querySelector('.content');
+                const rect = contentDiv.getBoundingClientRect();
+                const y = ((rect.bottom + 50) / window.innerHeight) * 2 - 1;
+                const worldY = -y;
+                spinningSphere.mesh.position.set(0, worldY, 0.2);
+            }
+        }
+
+        function animate() {
+            const time = clock.getElapsedTime();
+            
+            if (controls) controls.update();
+            
+            if (refractor) {
+                refractor.material.uniforms.time.value = time;
+            }
+            if (spinningSphere) {
+                spinningSphere.animate(time);
+            }
+            
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>

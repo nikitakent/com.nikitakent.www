@@ -1,215 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <title>abt - nikitakent</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #b02F72;
-            font-family: "Gill Sans", "Gill Sans MT", sans-serif;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        #refractor-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: auto;
-            animation: distortIn 4s;
-        }
-        
-        .content {
-            position: relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: white;
-            max-width: min(90vw, 800px);
-            padding: 0 5vw;
-            opacity: 0;
-            animation: fadeIn 4s ease-out forwards;
-            z-index: 1;
-        }
-        
-        @keyframes fadeIn {
-            from {opacity:0;transform:translate(-50%,-50%) scale(1.1);filter:blur(3px);}
-            to {opacity:1;transform:translate(-50%,-50%);filter:none;}
-        }
-
-        @keyframes distortIn {
-            from {opacity:0;transform:scale(1.2)skew(10deg,5deg)rotate(-6deg);filter:blur(10px);}
-            to {opacity:1;transform:none;filter:none;}
-        }
-        
-        h1 {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            font-weight: bold;
-            letter-spacing: 5px;
-            margin-bottom: 1rem;
-        }
-        
-        p {
-            font-size: clamp(0.7rem, 2.5vw, 1rem);
-            font-weight: 300;
-            opacity: 0.9;
-            line-height: 1.4;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-        }
-        
-        @media (max-width: 768px) {
-            .content { padding: 0 5vw; }
-            p { margin-bottom: 0.8rem; line-height: 1.3; }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <title>abt - nikitakent</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    :root { --accent: #b02F72; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { width:100%; height:100%; background:var(--accent); font-family:"Gill Sans","Gill Sans MT",sans-serif; overflow:hidden; }
+    #refractor-canvas { position:fixed; inset:0; z-index:0; animation:distortIn 4s; }
+    .content {
+      position:absolute; inset:50% auto auto 50%;
+      transform:translate(-50%,-50%); text-align:center; color:#fff;
+      max-width:min(90vw,800px); padding:0 5vw; opacity:0; z-index:1; animation:fadeIn 4s ease-out forwards;
+    }
+    h1 { font-size:clamp(1rem,2vw,1.2rem); font-weight:700; letter-spacing:5px; margin-bottom:1rem; }
+    p { font-size:clamp(0.7rem,2.5vw,1rem); font-weight:300; opacity:.9; line-height:1.4; letter-spacing:1px; margin-bottom:1rem; }
+    @media (max-width:768px){ .content{padding:0 5vw;} p{margin-bottom:.8rem; line-height:1.3;} }
+    @keyframes fadeIn { from{opacity:0; transform:translate(-50%,-50%) scale(1.1); filter:blur(3px);} to{opacity:1; transform:translate(-50%,-50%); filter:none;} }
+    @keyframes distortIn { from{opacity:0; transform:scale(1.2) skew(10deg,5deg) rotate(-6deg); filter:blur(10px);} to{opacity:1; transform:none; filter:none;} }
+  </style>
 </head>
 <body>
-    <div id="refractor-canvas"></div>
-    <div class="content">
-        <h1 class="blur-text">/abt</h1>
-        <p>I use algorithms and game theory to improve markets of any kind. I am particularly interested in internet-based market applications, including high frequency trading, blockchain tokenomics, and improving liquidity in general (sorry, not sorry!!)</p>
+  <div id="refractor-canvas"></div>
 
-        <p>Previously, I was an analyst at Elevation Capital Management and interned at the United Nations secretariat. In 2022, I left New Zealand to pursue a Master's degree in Market Design at the University of Tokyo. In 2024, I wrote my thesis titled "Patent platform shows improvements in social welfare and profits" under the supervision of Prof. Shunya Noda.</p>
+  <div class="content">
+    <h1>/abt</h1>
+    <p>I use algorithms and game theory to improve markets of any kind. I am particularly interested in internet-based market applications, including high frequency trading, blockchain tokenomics, and improving liquidity in general (sorry, not sorry!!)</p>
+    <p>Previously, I was an analyst at Elevation Capital Management and interned at the United Nations secretariat. In 2022, I left New Zealand to pursue a Master's degree in Market Design at the University of Tokyo. In 2024, I wrote my thesis titled "Patent platform shows improvements in social welfare and profits" under the supervision of Prof. Shunya Noda.</p>
+    <p>Conferences and government initiatives I have spoken at include the New Zealand parliament, Latin America CAPE, Otago Foreign Policy School, SusHi Tech and the APEC leaders forum.</p>
+    <p>Currently I am focussed on product/strategy engineering with AltX Research where I spend my time happily doing a bunch of different things with blockchains, cryptography, stablecoins, and identity in Japan.</p>
+  </div>
 
-        <p>Conferences and government initiatives I have spoken at include the New Zealand parliament, Latin America CAPE, Otago Foreign Policy School, SusHi Tech and the APEC leaders forum.</p>
-        
-        <p>Currently I am focussed on product/strategy engineering with AltX Research where I spend my time happily doing a bunch of different things with blockchains, cryptography, stablecoins, and identity in Japan.</p>
-    </div>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../build/three.module.js",
+        "three/addons/": "./jsm/"
+      }
+    }
+  </script>
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "../build/three.module.js",
-                "three/addons/": "./jsm/"
-            }
+  <script type="module">
+    import * as THREE from 'three';
+    import { Refractor } from 'three/addons/objects/Refractor.js';
+    import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { SceneUtils } from './js/SceneUtils.js';
+
+    // --- Globals (scoped, no leaks)
+    let sceneMain, sceneUI, cameraMain, cameraUI, renderer, clock, refractor, spinningSphere, controls;
+    let navMenuGroup, abtLabel, blogLabel, menuVisible = false;
+
+    // Overlay viewport (centered; ~30% page area)
+    const vp = { x:0, y:0, w:0, h:0 };
+
+    init();
+
+    async function init() {
+      const container = document.getElementById('refractor-canvas');
+
+      // Main scene (full canvas)
+      sceneMain = new THREE.Scene();
+      cameraMain = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 500);
+      cameraMain.position.z = 2;
+
+      // UI scene (overlay box)
+      sceneUI = new THREE.Scene();
+      cameraUI = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 10);
+      cameraUI.position.z = 2;
+
+      clock = new THREE.Clock();
+
+      // Refractor background
+      const refractorGeometry = new THREE.PlaneGeometry(6, 4);
+      refractor = new Refractor(refractorGeometry, {
+        textureWidth: 512,
+        textureHeight: 512,
+        shader: WaterRefractionShader
+      });
+      refractor.position.set(0, 0, 0);
+      sceneMain.add(refractor);
+
+      // Sphere near content bottom
+      const spherePos = calculateSpherePosition();
+      spinningSphere = SceneUtils.createSpinningSphere(sceneMain, spherePos);
+
+      // Dudv
+      try {
+        const dudvMap = await new THREE.TextureLoader().loadAsync('textures/waterdudv.jpg');
+        dudvMap.wrapS = dudvMap.wrapT = THREE.RepeatWrapping;
+        refractor.material.uniforms.tDudv.value = dudvMap;
+      } catch (e) { console.warn('Could not load texture: textures/waterdudv.jpg', e); }
+
+      // Light
+      SceneUtils.createLighting(sceneMain, { color: 0xffffff, intensity: 2.5, distance: 250, y: 60 });
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setClearColor(0xb02F72, 1);
+      renderer.autoClear = false; // manual multi-pass
+      container.appendChild(renderer.domElement);
+
+      controls = new OrbitControls(cameraMain, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+
+      createNavMenu();
+      bindInteractions();
+
+      onWindowResize();
+      updateViewports();
+      window.addEventListener('resize', () => { onWindowResize(); updateViewports(); });
+
+      renderer.setAnimationLoop(animate);
+    }
+
+    // --- UI content
+    function makeRefractorText(text) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 100;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.font = 'normal 40px "Gill Sans","Gill Sans MT",sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#b02F72';
+      ctx.fillText(text, canvas.width/2, canvas.height/2);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.anisotropy = 8; tex.colorSpace = THREE.SRGBColorSpace;
+      return tex;
+    }
+
+    function createNavMenu() {
+      navMenuGroup = new THREE.Group();
+      sceneUI.add(navMenuGroup);
+
+      const makeLabel = (txt, y) => {
+        const m = new THREE.Mesh(
+          new THREE.PlaneGeometry(1.5, 0.6),
+          new THREE.MeshBasicMaterial({ map: makeRefractorText(txt), transparent: true })
+        );
+        m.position.set(0, y, 0);
+        navMenuGroup.add(m);
+        return m;
+      };
+
+      abtLabel  = makeLabel('/abt',  0.5);
+      blogLabel = makeLabel('/blog', -0.5);
+
+      // soft backdrop
+      const bg = new THREE.Mesh(
+        new THREE.PlaneGeometry(3, 2),
+        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.25 })
+      );
+      bg.position.z = -0.01;
+      navMenuGroup.add(bg);
+
+      navMenuGroup.visible = false;
+    }
+
+    function toggleNavMenu() {
+      menuVisible = !menuVisible;
+      navMenuGroup.visible = menuVisible;
+    }
+
+    // --- Interactions (raycasting in both scenes)
+    function bindInteractions() {
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      renderer.domElement.addEventListener('click', (event) => {
+        const W = renderer.domElement.clientWidth;
+        const H = renderer.domElement.clientHeight;
+
+        // Click in main scene
+        mouse.x =  (event.clientX / W) * 2 - 1;
+        mouse.y = -(event.clientY / H) * 2 + 1;
+        raycaster.setFromCamera(mouse, cameraMain);
+        if (spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0) {
+          toggleNavMenu();
+          return;
         }
-    </script>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { Refractor } from 'three/addons/objects/Refractor.js';
-        import { WaterRefractionShader } from 'three/addons/shaders/WaterRefractionShader.js';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        // Click in overlay viewport
+        if (!menuVisible) return;
+        if (event.clientX < vp.x || event.clientX > vp.x + vp.w || event.clientY < vp.y || event.clientY > vp.y + vp.h) return;
 
-        import { SceneUtils } from './js/SceneUtils.js';
-        let scene, camera, renderer, clock, refractor, spinningSphere, controls;
+        // Map to overlay NDC
+        const ox = ( (event.clientX - vp.x) / vp.w ) * 2 - 1;
+        const oy = -( (event.clientY - vp.y) / vp.h ) * 2 + 1;
 
-        init();
-
-        async function init() {
-            const container = document.getElementById('refractor-canvas');
-            
-            // scene
-            scene = new THREE.Scene();
-            
-            // camera
-            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 500);
-            camera.position.z = 2;
-            
-            // clock for animation
-            clock = new THREE.Clock();
-            
-            // create /abt refractor
-            const refractorGeometry = new THREE.PlaneGeometry(6, 4);
-            
-            refractor = new Refractor(refractorGeometry, {
-                textureWidth: 512,
-                textureHeight: 512,
-                shader: WaterRefractionShader
-            });
-            
-            refractor.position.set(0, 0, 0);
-            scene.add(refractor);
-            
-            spinningSphere = SceneUtils.createSpinningSphere(scene)
-            try {
-                const loader = new THREE.TextureLoader();
-                const dudvMap = await loader.loadAsync('textures/waterdudv.jpg');
-                dudvMap.wrapS = dudvMap.wrapT = THREE.RepeatWrapping;
-                refractor.material.uniforms.tDudv.value = dudvMap;
-            } catch (error) {
-                console.warn('Could not load texture: textures/waterdudv.jpg', error);
-            }
-
-            		SceneUtils.createLighting(scene, {
-					color: 0xffffff,
-					intensity: 2.5,
-					distance: 250,
-					y: 60
-				});
-
-            
-            // renderer
-            renderer = new THREE.WebGLRenderer({ 
-                alpha: true,
-                antialias: true 
-            });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setAnimationLoop(animate);
-            renderer.setClearColor(0xb02F72, 1);
-            
-            container.appendChild(renderer.domElement);
-            
-            // Add OrbitControls
-            controls = new OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            
-            // Add sphere click detection
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-            
-            renderer.domElement.addEventListener('click', (event) => {
-                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(mouse, camera);
-                
-                if (spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0) {
-                    alert('More coming soon on 18 October 2025');
-                }
-            });
-
-            onWindowResize();
-            window.addEventListener('resize', onWindowResize);
+        raycaster.setFromCamera({ x: ox, y: oy }, cameraUI);
+        const hits = raycaster.intersectObjects([abtLabel, blogLabel], true);
+        if (hits.length) {
+          const o = hits[0].object;
+          if (o === abtLabel) window.location.href = 'abt.html';
+          else if (o === blogLabel) window.location.href = 'blog.html';
         }
+      });
+    }
 
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            if (refractor) refractor.scale.setScalar(0.8 * Math.max(camera.aspect, 1));
-        }
+    // --- Layout helpers
+    function calculateSpherePosition() {
+      const rect = document.querySelector('.content').getBoundingClientRect();
+      const yNdc = ((rect.bottom + 50) / window.innerHeight) * 2 - 1;
+      return { x: 0, y: -yNdc, z: 0.2 };
+    }
 
-        function animate() {
-            const time = clock.getElapsedTime();
-            
-            if (controls) controls.update();
-            
-            if (refractor) {
-                refractor.material.uniforms.time.value = time;
-            }
-            if (spinningSphere) {
-                spinningSphere.animate(time);
-            }
-            
-            renderer.render(scene, camera);
-        }
-    </script>
+    function updateViewports() {
+      const W = window.innerWidth, H = window.innerHeight;
+      renderer.setSize(W, H, false);
+
+      // scale s so area ≈ 30% (s = sqrt(0.3))
+      const s = Math.sqrt(0.30);
+      vp.w = Math.round(W * s);
+      vp.h = Math.round(H * s);
+      vp.x = Math.floor((W - vp.w) / 2);
+      vp.y = Math.floor((H - vp.h) / 2);
+
+      cameraMain.aspect = W / H;
+      cameraMain.updateProjectionMatrix();
+    }
+
+    function onWindowResize() {
+      cameraMain.aspect = window.innerWidth / window.innerHeight;
+      cameraMain.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (refractor) refractor.scale.setScalar(0.8 * Math.max(cameraMain.aspect, 1));
+
+      if (spinningSphere) {
+        const p = calculateSpherePosition();
+        spinningSphere.mesh.position.set(p.x, p.y, p.z);
+      }
+    }
+
+    // --- Render
+    function animate() {
+      const time = clock.getElapsedTime();
+
+      controls?.update();
+      if (refractor) refractor.material.uniforms.time.value = time;
+      spinningSphere?.animate(time);
+
+      // PASS 1: main scene full canvas
+      renderer.clear();
+      renderer.setScissorTest(false);
+      renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+      renderer.render(sceneMain, cameraMain);
+
+      // PASS 2: overlay scene in centered viewport
+      renderer.clearDepth();
+      renderer.setScissorTest(true);
+      renderer.setViewport(vp.x, vp.y, vp.w, vp.h);
+      renderer.setScissor(vp.x, vp.y, vp.w, vp.h);
+      renderer.render(sceneUI, cameraUI);
+
+      renderer.setScissorTest(false);
+    }
+  </script>
 </body>
 </html>
