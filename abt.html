@@ -6,22 +6,60 @@
   <title>abt - nikitakent</title>
   <link rel="stylesheet" href="styles.css" />
   <style>
-    :root { --accent: #b02F72; }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    html, body { width:100%; height:100%; background:var(--accent); font-family:"Gill Sans","Gill Sans MT",sans-serif; overflow:hidden; }
-    #refractor-canvas { position:fixed; inset:0; z-index:0; animation:distortIn 4s; }
-    #menu-canvas { position:fixed; z-index:2; pointer-events:auto; } /* overlay container */
-    .content {
-      position:absolute; inset:50% auto auto 50%;
-      transform:translate(-50%,-50%); text-align:center; color:#fff;
-      max-width:min(90vw,800px); padding:0 5vw; opacity:0; z-index:1; animation:fadeIn 4s ease-out forwards;
-    }
-    h1 { font-size:clamp(1rem,2vw,1.2rem); font-weight:700; letter-spacing:5px; margin-bottom:1rem; }
-    p { font-size:clamp(0.7rem,2.5vw,1rem); font-weight:300; opacity:.9; line-height:1.4; letter-spacing:1px; margin-bottom:1rem; }
-    @media (max-width:768px){ .content{padding:0 5vw;} p{margin-bottom:.8rem; line-height:1.3;} }
-    @keyframes fadeIn { from{opacity:0; transform:translate(-50%,-50%) scale(1.1); filter:blur(3px);} to{opacity:1; transform:translate(-50%,-50%); filter:none;} }
-    @keyframes distortIn { from{opacity:0; transform:scale(1.2) skew(10deg,5deg) rotate(-6deg); filter:blur(10px);} to{opacity:1; transform:none; filter:none;} }
-  </style>
+      :root { --accent:#b02F72; }
+
+      *,
+      *::before,
+      *::after { box-sizing:border-box; }
+      html, body {
+        height:100%;
+        margin:0;
+        background:var(--accent);
+        font-family:"Gill Sans","Gill Sans MT",sans-serif;
+        overflow:hidden;
+      }
+
+      #refractor-canvas,
+      #menu-canvas { position:fixed; inset:0; }
+      #refractor-canvas { z-index:0; animation:distortIn 4s; }
+      #menu-canvas { z-index:2; } /* pointer-events:auto is default */
+
+      .content{
+        position:absolute; top:50%; left:50%;
+        transform:translate(-50%,-50%);
+        text-align:center; color:#fff;
+        width:min(92vw,800px);               /* wider by default */
+        padding-inline:5vw;
+        opacity:0; z-index:1;
+        animation:fadeIn 4s ease-out forwards;
+      }
+
+      h1{
+        font-size:clamp(1rem,2vw,1.2rem);
+        font-weight:700; letter-spacing:5px;
+        margin-bottom:1rem;
+      }
+      p{
+        font-size:clamp(0.7rem,2.5vw,1rem);
+        font-weight:300; opacity:.9; line-height:1.4;
+        letter-spacing:1px; margin-bottom:1rem;
+      }
+
+      @media (max-width:768px){
+        .content{ width:100vw; padding-inline:6vw; } /* ~88vw content area */
+        p{ margin-bottom:.8rem; line-height:1.3; }
+      }
+
+      @keyframes fadeIn{
+        from{ opacity:0; transform:translate(-50%,-50%) scale(1.1); filter:blur(3px); }
+        to  { opacity:1; transform:translate(-50%,-50%); filter:none; }
+      }
+      @keyframes distortIn{
+        from{ opacity:0; transform:scale(1.2) skew(10deg,5deg) rotate(-6deg); filter:blur(10px); }
+        to  { opacity:1; transform:none; filter:none; }
+      }
+</style>
+
 </head>
 <body>
   <div id="refractor-canvas"></div>
@@ -120,67 +158,82 @@
       renderer.setAnimationLoop(animate);
     }
 
-    // Slightly larger texture so labels are crisp on phones
-    function makeRefractorText(text) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 256; canvas.height = 64;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'rgba(255,255,255,1.0)';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.font = 'normal 24px "Gill Sans","Gill Sans MT",sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = '#b02F72';
-      ctx.fillText(text, canvas.width/2, canvas.height/2);
-      const tex = new THREE.CanvasTexture(canvas);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      return tex;
-    }
+function makeRefractorText(text) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
 
-    function createNavMenu() {
-      navMenuGroup = new THREE.Group();
-      sceneMenu.add(navMenuGroup);
+  // card background (rounded, subtle shadow)
+  ctx.fillStyle = '#fff';
+  ctx.shadowColor = 'rgba(0,0,0,0.12)';
+  ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
+  ctx.roundRect(4, 4, canvas.width - 8, canvas.height - 8, 10);
+  ctx.fill();
 
-      const makeLabel = (txt, y) => {
-        const m = new THREE.Mesh(
-          new THREE.PlaneGeometry(0.8, 0.2),
-          new THREE.MeshBasicMaterial({ map: makeRefractorText(txt), transparent: true })
-        );
-        m.position.set(0, y, 0);
-        navMenuGroup.add(m);
-        return m;
-      };
+  // text (same font/color)
+  ctx.shadowColor = 'transparent';
+  ctx.font = 'normal 24px "Gill Sans","Gill Sans MT",sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#b02F72';
+  ctx.fillText(text, canvas.width/2, canvas.height/2 + 1);
 
-      abtLabel  = makeLabel('/abt',  0.5);
-      blogLabel = makeLabel('/blog', -0.5);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.minFilter = THREE.LinearMipmapLinearFilter;
+  tex.magFilter = THREE.LinearFilter;
+  tex.generateMipmaps = true;
+  return tex;
+}
 
-      const bg = new THREE.Mesh(
-        new THREE.PlaneGeometry(2, 1.5),
-        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.25 })
-      );
-      bg.position.z = -0.01;
-      navMenuGroup.add(bg);
+function createNavMenu() {
+  navMenuGroup = new THREE.Group();
+  sceneMenu.add(navMenuGroup);
 
-      navMenuGroup.visible = false;
-    }
+  const makeLabel = (txt, y) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.9, 0.28),
+      new THREE.MeshBasicMaterial({ map: makeRefractorText(txt), transparent: true })
+    );
+    m.position.set(0, y, 0);
+    navMenuGroup.add(m);
+    return m;
+  };
+
+  abtLabel  = makeLabel('/abt',  0.20);
+  blogLabel = makeLabel('/blog', -0.20);
+
+  const bg = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.1, 1.5),
+    new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.22 })
+  );
+  bg.position.z = -0.01;
+  navMenuGroup.add(bg);
+
+  navMenuGroup.visible = false;
+}
+
 
     function toggleNavMenu() {
       menuVisible = !menuVisible;
       navMenuGroup.visible = menuVisible;
+      menuContainer.style.pointerEvents = menuVisible ? 'auto' : 'none';
     }
 
     function bindInteractions() {
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
-      const bindPointer = (el, handler) => {
+      const attachPointer = (el, handler) => {
         el.addEventListener('click', handler, { passive: true });
+        el.addEventListener('hover', handler, { passive: true });
         el.addEventListener('touchstart', (e) => {
           const t = e.touches[0];
           handler({ clientX: t.clientX, clientY: t.clientY, preventDefault:()=>{} });
         }, { passive: true });
       };
 
-      bindPointer(renderer.domElement, (event) => {
+      // pointer events for sphere 
+      attachPointer(renderer.domElement, (event) => {
         const rect = renderer.domElement.getBoundingClientRect();
         const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -189,7 +242,8 @@
         if (spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0) toggleNavMenu();
       });
 
-      bindPointer(rendererMenu.domElement, (event) => {
+      // pointer events for menu
+      attachPointer(rendererMenu.domElement, (event) => {
         if (!menuVisible) return;
         const rect = rendererMenu.domElement.getBoundingClientRect();
         const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -202,6 +256,30 @@
           else if (o === blogLabel) window.location.href = 'blog.html';
         }
       });
+
+      // hover effects
+      renderer.domElement.addEventListener('mousemove', (event) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      mouse.set(x, y);
+      raycaster.setFromCamera(mouse, cameraMain);
+      const isHoveringSphere = spinningSphere && raycaster.intersectObject(spinningSphere.mesh).length > 0;
+      spinningSphere.mesh.material.emissive.setHex(isHoveringSphere ? 0x666666 : 0x333333); // Brighter glow on hover
+    });
+
+    // hover effects for menu
+    rendererMenu.domElement.addEventListener('mousemove', (event) => {
+      if (!menuVisible) return;
+      const rect = rendererMenu.domElement.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera({ x, y }, cameraMenu);
+      const hits = raycaster.intersectObjects([abtLabel, blogLabel], true);
+      const isHoveringLabel = hits.length > 0;
+      abtLabel.material.color.setHex(isHoveringLabel && hits[0].object === abtLabel ? 0xb02F72 : 0xffffff); // Pink tint on hover
+      blogLabel.material.color.setHex(isHoveringLabel && hits[0].object === blogLabel ? 0xb02F72 : 0xffffff);
+    });
     }
 
     requestAnimationFrame(() => {
@@ -277,6 +355,7 @@
       renderer.render(sceneMain, cameraMain);
       rendererMenu.render(sceneMenu, cameraMenu);
     }
+
   </script>
 </body>
 </html>
