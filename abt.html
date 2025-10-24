@@ -200,7 +200,7 @@ function createNavMenu() {
   };
 
   abtLabel  = makeLabel('/abt',  0.20);
-  blogLabel = makeLabel('/blog', -0.20);
+  blogLabel = makeLabel('/home', -0.20); // change once blog established
 
   const bg = new THREE.Mesh(
     new THREE.PlaneGeometry(2.1, 1.5),
@@ -253,7 +253,7 @@ function createNavMenu() {
         if (hits.length) {
           const o = hits[0].object;
           if (o === abtLabel) window.location.href = 'abt.html';
-          else if (o === blogLabel) window.location.href = 'blog.html';
+          else if (o === blogLabel) window.location.href = 'home.html'; // change once blog established
         }
       });
 
