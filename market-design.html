@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Market Design - nikitakent</title>
+  <style>
+    :root { --accent:#b02F72; }
+    *, *::before, *::after { box-sizing:border-box; }
+    body {
+      margin:0;
+      background:#fdfbfc;
+      color:#2a2a2a;
+      font-family:"Gill Sans","Gill Sans MT",sans-serif;
+      line-height:1.65;
+    }
+    main { max-width:42rem; margin:0 auto; padding:4rem 1.5rem 6rem; }
+    nav { margin-bottom:3rem; font-size:0.85rem; letter-spacing:2px; }
+    nav a { color:var(--accent); text-decoration:none; }
+    nav a:hover { text-decoration:underline; }
+    h1 { color:var(--accent); letter-spacing:4px; font-weight:700; font-size:1.4rem; margin-bottom:0.2rem; }
+    h2 { color:var(--accent); letter-spacing:2px; font-weight:700; font-size:1.05rem; margin-top:2.5rem; }
+    .date { color:#8a8a8a; font-size:0.8rem; letter-spacing:2px; margin-bottom:2.5rem; }
+    p { margin:1rem 0; }
+    blockquote {
+      margin:1.5rem 0; padding:0.2rem 1.2rem;
+      border-left:3px solid var(--accent);
+      color:#555; font-style:italic;
+    }
+    a { color:var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <nav><a href="index.html">nikitakent</a> / <a href="writing.html">writing</a> / market design</nav>
+
+    <h1>Market Design</h1>
+    <div class="date">March 2024</div>
+
+    <h2>My story &mdash; how I got into Market Design</h2>
+
+    <p>Most people are familiar with game theory in the contexts of war, poker, or chess. I was actually introduced to game theory in a class covering power and politics. It seemed like a tidy way to introduce &ldquo;science&rdquo; into Political Science, which I liked.</p>
+
+    <p>I didn&rsquo;t dig too much deeper into game theory, since the first book I picked up scared me off with complex mathematics I had neglected to learn in high school. I also didn&rsquo;t fancy learning it for the sole purpose of creating nuclear proliferation games. So, I shelved Game Theory with the mental note that it was an interesting field to explore someday.</p>
+
+    <p>At the time I was interested in finance, technology, and geopolitics but didn&rsquo;t have a nice way to express the intersection of these interests. Thankfully, in 2018, Stanford Professor Alvin E. Roth legitimised the field of Market Design as a child node of Game Theory and Mechanism Design with his seminal paper &ldquo;Marketplaces, Markets, and Market Design.&rdquo; I highly recommend reading this paper if you're interested in diving deeper into the field.</p>
+
+    <p>Market Design seemed to encompass all my interests and tied them together with a beautiful bow. Market Design allowed one to design any kind of trading dynamic in the world and optimise the rules of the game until the desired objectives are reached. Profitability is a common objective to choose, but we can also choose non-financial objectives like stability or no-collusion. A strong mathematics background is a prerequisite to Market Design, but an understanding of human psychology, current world affairs/trends, policy, financial markets and computer programming is extremely beneficial.</p>
+
+    <h2>What is Market Design?</h2>
+
+    <p>People have been designing markets since forever, but what makes Market Design a particularly interesting field of study today is that the internet has drastically changed the conditions of markets.</p>
+
+    <p>The internet has made it possible for us to create new rules, new assumptions, and new players. The possibilities we can now create are staggering. For one, transaction costs for participating in markets are so much lower than before, meaning we often have a larger number of participants and offerings at any given time. While Amazon/eBay/Tinder are perfect examples, some more obscure (yet successful) recently-designed markets include ones for liver transplants (Roth) and radio spectrum allocation in the United States (Leyton-Brown, Milgrom and Segal).</p>
+
+    <p>Given the complexity of today's global markets, traditional schools of Finance and Economics no longer serve to solve marketplace dilemmas. Today, a price differential of just 0.01 cents can determine the success or failure of a retail marketplace. Trading strategies like Maximum Extractable Value (MEV) in cryptocurrencies and front-running in high frequency trading (HFT) are estimated to cost &ldquo;mom-and-pop&rdquo; investors billions of dollars annually. Trust in internet markets is a major issue too: credit card fraud is prolific, as well as digital scam artists, false signalling, counterfeit goods &hellip; the list goes on. While it is easy to focus on the vast array of market problems and inefficiencies in the internet era, let us not forget that we can also build marketplaces that are efficient in ways we have never seen before. Market Design leverages new technology and traditional economic theory to both solve market inefficiencies and build markets. Used strategically, Market Design is the difference between success and failure, or billions and millions, for any single company, government entity or individual.</p>
+
+    <blockquote>&ldquo;Note that market designers are not mostly academics: the design of marketplaces offers rich rewards to entrepreneurs, who must also experiment to develop, maintain, and defend marketplaces that attract wide and steady participation.&rdquo; &mdash; Roth</blockquote>
+
+    <h2>Designing markets with technology: a powerful tool</h2>
+
+    <p>There are a few (younger) Market Design professors who have an interest in market design and cryptography. In my opinion, cryptography adds another dimension of innovation to markets like that of the internet. Self-perpetuating algorithms, privacy, guaranteed anonymity with trust (see: zero knowledge cryptography) &hellip; the possibilities are incredible. But they&rsquo;re also dangerous.</p>
+
+    <p>In 2019, Professor Shunya Noda (formerly Stanford, now University of Tokyo) began to write a paper on a self-enforcing smart contract mechanism which enables a player to engage with another unknown player and successfully complete a deal (Matsushima &amp; Noda, 2020). If we suppose that black markets have traditionally been constrained by the need for long-term trust between players, including geographical proximity and/or legitimate threats carried out towards rogue players, the smart-contract mechanism Noda &amp; Matsushima studied has some dark implications for society. I hope that law enforcement can act quickly and ideally preventatively.</p>
+
+    <p>While the smart contract enforcement finding was startling, I'd still like to believe that technology can solve problems at least as much as it creates them. I wouldn&rsquo;t like to fight technology; I&rsquo;d rather swim with it, or create it. I hope that with more market designers, technologists, and policy makers with technical backgrounds, we can use market design as a tool for good.</p>
+
+    <h2>How will AI affect Market Design?</h2>
+
+    <p>Current LLMs are hopelessly bad at game theory, and I don't believe that we will be seeing much development in that area anytime soon. However, the deep learning aspect of AI is quite exciting and has sped up the process of finding optimal strategies. Traditionally, we have had to use piecewise algebra algorithms computed by industrial IBM machines to find (sub-par) results for a <em>two-player auction game with only three items</em>. Such algorithms would also take <em>days</em> to run. Today, using common python libraries like TensorFlow, combined with some engineering concepts, economists can now calculate pretty-accurate results in a matter of minutes. Studying games with over 3 players and items is now a realistic pursuit, which is great considering a lot of our markets today involve these multi-player, multi-item settings.</p>
+
+    <p>Thanks to the less effort involved in calculating optimal strategies using deep learning, we may be able to better customise existing markets. For example, eBay could consider implementing a machine learning algorithm which customises the auction-type based on the category of goods to improve the payoff of buyers and sellers. We may also be able to find new results for markets which we have previously considered too complex, but such results are more constrained by developments in economic theory.</p>
+
+    <h2>Building my career in Market Design</h2>
+
+    <p>In 2022, I was accepted as Professor Noda&rsquo;s master&rsquo;s student at the University of Tokyo and had the privilege of being taught several algorithmic game theory classes by him. I was able to dive deeper into the works of Alvin Roth (the father of Market Design and a director of the University of Tokyo Market Design Center), Fuhito Kojima (University of Tokyo), Kevin Leyton-Brown (University of British Columbia) and Tim Roughgarden (Columbia University), among others. In my thesis, I designed an intellectual property rights marketplace that improved social welfare and profitability compared to the current market. I remain interested in markets covering intellectual property, and I've got an eye on what US Music Manager Daouda Leonard is doing at createsafe.io.</p>
+
+    <p>With the University of Tokyo Market Design Center, I was an active member of a climate-focussed research arm led by Prof. Michihiro Kandori (President of the Game Theory Society) seeking to design a carbon market to bridge the gap between political ideals and business/government objectives. The literature review showed us that a lot of the dominant work on carbon economics is substantially flawed and likely requires more brainpower or ingenuity if we are set on reducing carbon emissions. With our work, the Japanese Government agreed to fund a climate-focussed game theory department at the Graduate School of Economics, set to roll out this year. I am very much looking forward to seeing Tokyo blow the European economists out of the water.</p>
+
+    <p>What&rsquo;s next? As much as the academic side of Market Design will always have a special place in my heart and brain, I&rsquo;m excited to be one of the students coming out to the industry side to see how we can implement the burgeoning theory in business. Market Design is nothing without real-world application, and we need experts on both sides to fulfil the potential of market design to change the world.</p>
+  </main>
+</body>
+</html>

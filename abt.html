@@ -84,7 +84,7 @@
     import { SceneUtils } from './js/SceneUtils.js';
 
     let sceneMain, sceneMenu, cameraMain, cameraMenu, renderer, rendererMenu, clock, refractor, spinningSphere, controls;
-    let navMenuGroup, abtLabel, blogLabel, menuVisible = false;
+    let navMenuGroup, abtLabel, writingLabel, blogLabel, menuVisible = false;
 
     const vp = { x:0, y:0, w:0, h:0 };
     const DPR = Math.min(2, window.devicePixelRatio || 1);
@@ -195,8 +195,9 @@ function createNavMenu() {
     return m;
   };
 
-  abtLabel  = makeLabel('/abt',  0.20);
-  blogLabel = makeLabel('/home', -0.20); // change once blog established
+  abtLabel     = makeLabel('/abt',      0.35);
+  writingLabel = makeLabel('/writing',  0);
+  blogLabel    = makeLabel('/home',    -0.35);
 
   const bg = new THREE.Mesh(
     new THREE.PlaneGeometry(2.1, 1.5),
@@ -242,11 +243,12 @@ function createNavMenu() {
         const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera({ x, y }, cameraMenu);
-        const hits = raycaster.intersectObjects([abtLabel, blogLabel], true);
+        const hits = raycaster.intersectObjects([abtLabel, writingLabel, blogLabel], true);
         if (hits.length) {
           const o = hits[0].object;
           if (o === abtLabel) window.location.href = 'abt.html';
-          else if (o === blogLabel) window.location.href = 'index.html'; // change once blog established
+          else if (o === writingLabel) window.location.href = 'writing.html';
+          else if (o === blogLabel) window.location.href = 'index.html';
         }
       });
 
@@ -268,9 +270,9 @@ function createNavMenu() {
       const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera({ x, y }, cameraMenu);
-      const hits = raycaster.intersectObjects([abtLabel, blogLabel], true);
+      const hits = raycaster.intersectObjects([abtLabel, writingLabel, blogLabel], true);
       const hovered = hits.length ? hits[0].object : null;
-      for (const label of [abtLabel, blogLabel]) {
+      for (const label of [abtLabel, writingLabel, blogLabel]) {
         label.material.map = label === hovered ? label.userData.hoverTex : label.userData.normalTex;
       }
       rendererMenu.domElement.style.cursor = hovered ? 'pointer' : 'default';
