@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   <title>abt - nikitakent</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
       :root { --accent:#b02F72; }
 
@@ -22,7 +21,9 @@
       #refractor-canvas,
       #menu-canvas { position:fixed; inset:0; }
       #refractor-canvas { z-index:0; animation:distortIn 4s; }
-      #menu-canvas { z-index:2; } /* pointer-events:auto is default */
+      /* pointer-events off while the menu is hidden, so the canvas
+         doesn't block orbit controls; toggled on with the menu */
+      #menu-canvas { z-index:2; pointer-events:none; }
 
       .content{
         position:absolute; top:50%; left:50%;
@@ -30,6 +31,7 @@
         text-align:center; color:#fff;
         width:min(92vw,800px);               /* wider by default */
         padding-inline:5vw;
+        max-height:92vh; overflow-y:auto;    /* scroll instead of clipping on short viewports */
         opacity:0; z-index:1;
         animation:fadeIn 4s ease-out forwards;
       }
@@ -73,15 +75,6 @@
   </div>
 
   <div id="menu-canvas"></div>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "../build/three.module.js",
-        "three/addons/": "./jsm/"
-      }
-    }
-  </script>
 
   <script type="module">
     import * as THREE from 'three';
@@ -158,13 +151,13 @@
       renderer.setAnimationLoop(animate);
     }
 
-function makeRefractorText(text) {
+function makeRefractorText(text, hover = false) {
   const canvas = document.createElement('canvas');
   canvas.width = 256; canvas.height = 64;
   const ctx = canvas.getContext('2d');
 
-  // card background (rounded, subtle shadow)
-  ctx.fillStyle = '#fff';
+  // card background (rounded, subtle shadow); colours invert on hover
+  ctx.fillStyle = hover ? '#b02F72' : '#fff';
   ctx.shadowColor = 'rgba(0,0,0,0.12)';
   ctx.shadowBlur = 8; ctx.shadowOffsetY = 2;
   ctx.roundRect(4, 4, canvas.width - 8, canvas.height - 8, 10);
@@ -174,7 +167,7 @@ function makeRefractorText(text) {
   ctx.shadowColor = 'transparent';
   ctx.font = 'normal 24px "Gill Sans","Gill Sans MT",sans-serif';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#b02F72';
+  ctx.fillStyle = hover ? '#fff' : '#b02F72';
   ctx.fillText(text, canvas.width/2, canvas.height/2 + 1);
 
   const tex = new THREE.CanvasTexture(canvas);
@@ -190,10 +183,13 @@ function createNavMenu() {
   sceneMenu.add(navMenuGroup);
 
   const makeLabel = (txt, y) => {
+    const normalTex = makeRefractorText(txt);
+    const hoverTex = makeRefractorText(txt, true);
     const m = new THREE.Mesh(
       new THREE.PlaneGeometry(0.9, 0.28),
-      new THREE.MeshBasicMaterial({ map: makeRefractorText(txt), transparent: true })
+      new THREE.MeshBasicMaterial({ map: normalTex, transparent: true })
     );
+    m.userData = { normalTex, hoverTex };
     m.position.set(0, y, 0);
     navMenuGroup.add(m);
     return m;
@@ -216,20 +212,17 @@ function createNavMenu() {
     function toggleNavMenu() {
       menuVisible = !menuVisible;
       navMenuGroup.visible = menuVisible;
-      menuContainer.style.pointerEvents = menuVisible ? 'auto' : 'none';
+      document.getElementById('menu-canvas').style.pointerEvents = menuVisible ? 'auto' : 'none';
     }
 
     function bindInteractions() {
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
 
+      // 'click' alone covers mouse and touch (taps synthesize clicks);
+      // binding touchstart as well made every tap fire the handler twice
       const attachPointer = (el, handler) => {
         el.addEventListener('click', handler, { passive: true });
-        el.addEventListener('hover', handler, { passive: true });
-        el.addEventListener('touchstart', (e) => {
-          const t = e.touches[0];
-          handler({ clientX: t.clientX, clientY: t.clientY, preventDefault:()=>{} });
-        }, { passive: true });
       };
 
       // pointer events for sphere 
@@ -253,7 +246,7 @@ function createNavMenu() {
         if (hits.length) {
           const o = hits[0].object;
           if (o === abtLabel) window.location.href = 'abt.html';
-          else if (o === blogLabel) window.location.href = 'home.html'; // change once blog established
+          else if (o === blogLabel) window.location.href = 'index.html'; // change once blog established
         }
       });
 
@@ -276,9 +269,11 @@ function createNavMenu() {
       const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera({ x, y }, cameraMenu);
       const hits = raycaster.intersectObjects([abtLabel, blogLabel], true);
-      const isHoveringLabel = hits.length > 0;
-      abtLabel.material.color.setHex(isHoveringLabel && hits[0].object === abtLabel ? 0xb02F72 : 0xffffff); // Pink tint on hover
-      blogLabel.material.color.setHex(isHoveringLabel && hits[0].object === blogLabel ? 0xb02F72 : 0xffffff);
+      const hovered = hits.length ? hits[0].object : null;
+      for (const label of [abtLabel, blogLabel]) {
+        label.material.map = label === hovered ? label.userData.hoverTex : label.userData.normalTex;
+      }
+      rendererMenu.domElement.style.cursor = hovered ? 'pointer' : 'default';
     });
     }
 
@@ -325,7 +320,7 @@ function createNavMenu() {
 
       const menuEl = document.getElementById('menu-canvas');
       Object.assign(menuEl.style, { left: vp.x + 'px', top: vp.y + 'px', width: vp.w + 'px', height: vp.h + 'px' });
-      rendererMenu.setSize(vp.w, vp.h, false);
+      rendererMenu.setSize(vp.w, vp.h); // updates canvas CSS size too, else it displays at DPR× scale
 
       const scale = THREE.MathUtils.clamp(vp.w / 300, 0.8, 1.6);
       navMenuGroup.scale.setScalar(scale);

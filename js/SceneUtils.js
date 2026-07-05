@@ -13,7 +13,7 @@ export class SceneUtils {
         const concreteColour = wrap(loader.load('textures/concrete/colour.jpeg'));
         const normalMap = wrap(loader.load('textures/concrete/normal.jpeg'));
         const roughMap = wrap(loader.load('textures/concrete/roughness.jpeg'));
-        const aoMap = wrap(loader.load('textures/concrete/ao.jpg'));
+        const aoMap = wrap(loader.load('textures/concrete/ao.jpeg'));
         concreteColour.colorSpace = THREE.SRGBColorSpace;
 
         const concrete = new THREE.MeshStandardMaterial({
@@ -55,16 +55,16 @@ export class SceneUtils {
     }
 
     static createBouncingSphere(scene, options = {}) {
-        const geometry = new THREE.IcosahedronGeometry(options.radius || 5, 0);
+        const geometry = new THREE.IcosahedronGeometry(options.radius ?? 5, 0);
         const material = new THREE.MeshPhongMaterial({
-            color: options.color || 0xffffff,
-            emissive: options.emissive || 0x333333,
+            color: options.color ?? 0xffffff,
+            emissive: options.emissive ?? 0x333333,
             flatShading: true
         });
-        
+
         const sphere = new THREE.Mesh(geometry, material);
         scene.add(sphere);
-        
+
         return {
             mesh: sphere,
             animate: (time) => {
@@ -80,42 +80,42 @@ export class SceneUtils {
     }
 
     static createSpinningSphere(scene, options = {}) {
-        const geometry = new THREE.IcosahedronGeometry(options.radius || 0.05, 0);
+        const geometry = new THREE.IcosahedronGeometry(options.radius ?? 0.05, 0);
         const material = new THREE.MeshPhongMaterial({
-            color: options.color || 0xffffff,
-            emissive: options.emissive || 0x333333,
+            color: options.color ?? 0xffffff,
+            emissive: options.emissive ?? 0x333333,
             flatShading: true
         });
-        
+
         const sphere = new THREE.Mesh(geometry, material);
         sphere.position.set(
-            options.x || 0.5,
-            options.y || -0.3,
-            options.z || 0.0
+            options.x ?? 0.5,
+            options.y ?? -0.3,
+            options.z ?? 0.0
         );
         scene.add(sphere);
-        
+
         return {
             mesh: sphere,
             animate: (time) => {
-                sphere.rotation.x = time * (options.speedX || 0.5);
-                sphere.rotation.y = time * (options.speedY || 1);
-                sphere.rotation.z = time * (options.speedZ || 0.3);
+                sphere.rotation.x = time * (options.speedX ?? 0.5);
+                sphere.rotation.y = time * (options.speedY ?? 1);
+                sphere.rotation.z = time * (options.speedZ ?? 0.3);
             }
         };
     }
 
     static createLighting(scene, options = {}) {
         const mainLight = new THREE.PointLight(
-            options.color || 0x7a7a6b,
-            options.intensity || 2.5,
-            options.distance || 250,
-            options.decay || 0
+            options.color ?? 0x7a7a6b,
+            options.intensity ?? 2.5,
+            options.distance ?? 250,
+            options.decay ?? 0
         );
         mainLight.position.set(
-            options.x || 0,
-            options.y || 60,
-            options.z || 0
+            options.x ?? 0,
+            options.y ?? 60,
+            options.z ?? 0
         );
         scene.add(mainLight);
         return mainLight;

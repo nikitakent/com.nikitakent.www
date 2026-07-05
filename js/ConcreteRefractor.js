@@ -126,7 +126,11 @@ export class ConcreteRefractor {
             }
         };
         
-        const onMouseClick = () => {
+        const onMouseClick = (event) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
             this.raycaster.setFromCamera(this.mouse, camera);
             const intersects = this.raycaster.intersectObject(this.label, true);
             if (intersects.length > 0 && onClickCallback) {

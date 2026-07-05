@@ -4,7 +4,6 @@
 		<title>nikitakent</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<link type="text/css" rel="stylesheet" href="styles.css">
 		<style>
 			body { color: #444; background: #000; }
 			a { color: #b02F72; }
@@ -12,15 +11,6 @@
 	</head>
 	<body>
 		<div id="container"></div>
-
-		<script type="importmap">
-			{
-				"imports": {
-					"three": "../build/three.module.js",
-					"three/addons/": "./jsm/"
-				}
-			}
-		</script>
 
 		<script type="module">
 
@@ -35,10 +25,6 @@
 			init();
 
 			async function init() {
-
-				// clear any existing fade overlays from previous navigation
-				const existingOverlays = document.querySelectorAll('div[style*="z-index: 9999"]');
-				existingOverlays.forEach(overlay => overlay.remove());
 
 				const container = document.getElementById( 'container' );
 
@@ -162,7 +148,7 @@
 								setTimeout(() => {
 									fadeOverlay.style.opacity = '1';
 									setTimeout(() => {
-										window.location.href = '/abt';
+										window.location.href = '/abt.html';
 									}, 1000);
 								}, 50);
 							}
@@ -174,10 +160,11 @@
 
 				window.addEventListener( 'resize', onWindowResize );
 
-				// Reset camera when user returns to page (back button)
-				document.addEventListener('visibilitychange', function() {
-					if (!document.hidden) {
-						// Page is visible again, reset camera to initial position
+				// Reset the page when restored from bfcache (back button):
+				// remove the pink fade overlay and put the camera back
+				window.addEventListener('pageshow', function(event) {
+					if (event.persisted) {
+						document.querySelectorAll('div[style*="z-index: 9999"]').forEach(overlay => overlay.remove());
 						camera.position.set(0, 75, 400);
 						controls.target.set(0, 40, 0);
 						controls.enabled = true;
